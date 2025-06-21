@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lebensmittel Einheiten-Rechner</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .header {
+            background: #495057;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
+        .search-container {
+            position: relative;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 8px 35px 8px 12px;
+            border: none;
+            border-radius: 20px;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .search-input::placeholder {
+            color: #666;
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px 20px;
+            text-align: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: #6c757d;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            background: white;
+            color: #495057;
+            border-bottom: 3px solid #495057;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 20px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .category {
+            background: #f8f9fa;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .category-header {
+            padding: 12px 16px;
+            font-weight: 700;
+            font-size: 14px;
+            text-align: center;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .kohlenhydrate-header { background: #6c757d; color: white; }
+        .fett-header { background: #6c757d; color: white; }
+        .eiweiss-header { background: #6c757d; color: white; }
+
+        .food-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .food-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            border-bottom: 1px solid #e9ecef;
+            transition: background-color 0.2s ease;
+        }
+
+        .food-item:hover {
+            background-color: #f1f3f4;
+        }
+
+        .food-item:last-child {
+            border-bottom: none;
+        }
+
+        .food-name {
+            flex: 1;
+            font-size: 13px;
+            font-weight: 500;
+            color: #333;
+            min-width: 0;
+            margin-right: 8px;
+        }
+
+        .food-controls {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .input-container {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .calc-input {
+            width: 50px;
+            height: 28px;
+            padding: 0 4px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 12px;
+            background: white;
+        }
+
+        .calc-input:focus {
+            outline: none;
+            border-color: #8b4513;
+            box-shadow: 0 0 0 2px rgba(139, 69, 19, 0.2);
+        }
+
+        .unit-label {
+            font-size: 10px;
+            color: #666;
+            font-weight: 500;
+            min-width: 20px;
+        }
+
+        .equals {
+            font-size: 12px;
+            color: #999;
+            margin: 0 2px;
+        }
+
+        .base-info {
+            font-size: 9px;
+            color: #999;
+            margin-left: 4px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Mobile Optimierung */
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+
+            .container {
+                border-radius: 12px;
+            }
+
+            .header {
+                padding: 15px;
+            }
+
+            .header h1 {
+                font-size: 1.5em;
+            }
+
+            .search-container {
+                max-width: 250px;
+            }
+
+            .tab {
+                padding: 12px 15px;
+                font-size: 14px;
+            }
+
+            .tab-content {
+                padding: 15px;
+            }
+
+            .categories {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .food-item {
+                padding: 6px 10px;
+            }
+
+            .food-name {
+                font-size: 12px;
+            }
+
+            .calc-input {
+                width: 45px;
+                height: 26px;
+                font-size: 11px;
+            }
+
+            .unit-label {
+                font-size: 9px;
+            }
+
+            .base-info {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .food-controls {
+                gap: 4px;
+            }
+
+            .calc-input {
+                width: 40px;
+                height: 24px;
+            }
+
+            .food-name {
+                font-size: 11px;
+            }
+        }
+
+        /* Scrollbar Styling */
+        .food-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .food-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .food-list::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 3px;
+        }
+
+        .food-list::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Beas Lebensmittel Rechner</h1>
+            <div class="search-container">
+                <input type="text" class="search-input" id="searchInput" placeholder="Suche...">
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('group1')">Ernährungsgruppe 1</button>
+            <button class="tab" onclick="showTab('group2')">Ernährungsgruppe 2</button>
+        </div>
+
+        <div id="group1" class="tab-content active">
+            <div class="categories">
+                <div class="category">
+                    <div class="category-header kohlenhydrate-header">Kohlenhydrate</div>
+                    <div class="food-list" id="kohlenhydrate-group1"></div>
+                </div>
+                <div class="category">
+                    <div class="category-header fett-header">Fette</div>
+                    <div class="food-list" id="fett-group1"></div>
+                </div>
+                <div class="category">
+                    <div class="category-header eiweiss-header">Eiweiße</div>
+                    <div class="food-list" id="eiweiss-group1"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="group2" class="tab-content">
+            <div class="categories">
+                <div class="category">
+                    <div class="category-header kohlenhydrate-header">Kohlenhydrate</div>
+                    <div class="food-list" id="kohlenhydrate-group2"></div>
+                </div>
+                <div class="category">
+                    <div class="category-header fett-header">Fette</div>
+                    <div class="food-list" id="fett-group2"></div>
+                </div>
+                <div class="category">
+                    <div class="category-header eiweiss-header">Eiweiße</div>
+                    <div class="food-list" id="eiweiss-group2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const foodData = {
+            group1: {
+                kohlenhydrate: {
+                    'Basmatireis': 13,
+                    'Hirse': 13,
+                    'Mischbrot': 19,
+                    'Vollkornnudeln': 12,
+                    'Vollkornbrot': 22,
+                    'Vollkornreis': 13,
+                    'Vollkorntoast': 17,
+                    'Weizenkleie': 24,
+                    'Wildreis': 14,
+                    'Bambussprossen': 265,
+                    'Brokkoli': 175,
+                    'Chicorée': 264,
+                    'Chinakohl': 370,
+                    'Feldsalat': 325,
+                    'Kartoffeln': 65,
+                    'Mangold': 315,
+                    'Peperoni': 195,
+                    'Radieschen': 320,
+                    'Rettich': 320,
+                    'Rosenkohl': 130,
+                    'Rotkohl': 200,
+                    'Rucola': 180,
+                    'Tomate': 250,
+                    'Weißkohl': 185,
+                    'Zucchini': 240,
+                    'Kichererbsen (getr.)': 14,
+                    'Weiße Bohnen (getr.)': 15
+                },
+                fett: {
+                    'Kürbiskerne': 4.5,
+                    'Leinsamen': 6.5,
+                    'Macadamia': 3.5,
+                    'Walnüsse': 3.5,
+                    'Butter': 3,
+                    'Kokosfett': 3,
+                    'Kokosmilch': 12,
+                    'Mayonnaise': 5,
+                    'Olivenöl': 3
+                },
+                eiweiss: {
+                    'Brathuhn': 22,
+                    'Rinderhack': 14,
+                    'Appenzeller': 8,
+                    'Brie': 9,
+                    'Buttermilch': 85,
+                    'Camembert': 11,
+                    'Cheddar': 7,
+                    'Edamer': 10,
+                    'Eier': 19,
+                    'Gouda': 8,
+                    'Parmesan': 8,
+                    'Quark': 28,
+                    'Romadur': 11,
+                    'Saure Sahne': 16,
+                    'Schlagsahne': 10
+                }
+            },
+            group2: {
+                kohlenhydrate: {
+                    'Amaranth': 12,
+                    'Buchweizen': 13,
+                    'Dinkel': 14,
+                    'Gerste': 14,
+                    'Hafer': 13,
+                    'Quinoa': 13,
+                    'Roggen': 15,
+                    'Roggenmischbrot': 21,
+                    'Roggenvollkornbrot': 23,
+                    'Erbsen': 55,
+                    'Kidneybohnen (getr.)': 10,
+                    'Linsen (getr.)': 15,
+                    'Tempeh': 23,
+                    'Artischocken': 200,
+                    'Eisbergsalat': 385,
+                    'Frühlingszwiebel': 145,
+                    'Grüne Bohnen': 140,
+                    'Karotte': 180,
+                    'Knoblauch': 33,
+                    'Kopfsalat': 385,
+                    'Lauch': 180,
+                    'Mais': 50,
+                    'Mungobohnensprossen': 80,
+                    'Radicchio': 385,
+                    'Schalotten': 62,
+                    'Spargel': 265,
+                    'Spinat': 300,
+                    'Süßkartoffel': 32,
+                    'Zwiebeln': 145
+                },
+                fett: {
+                    'Kokosnuss': 7,
+                    'Mandeln': 4,
+                    'Oliven': 18,
+                    'Pistazien': 4,
+                    'Sesamsamen': 4.5,
+                    'Sonnenblumenkerne': 4,
+                    'Butter': 3,
+                    'Mayonnaise': 3.5,
+                    'Olivenöl': 3
+                },
+                eiweiss: {
+                    'Hühnerbrust': 30,
+                    'Truthahnbrust': 28,
+                    'Butterkäse': 9,
+                    'Crème fraîche': 10,
+                    'Eier': 19,
+                    'Emmentaler': 8,
+                    'Feta': 13,
+                    'Gorgonzola': 8,
+                    'Hüttenkäse': 29,
+                    'Joghurt 3,5%': 44,
+                    'Mozzarella': 13,
+                    'Ricotta': 17,
+                    'Tilsiter': 8,
+                    'Romadur 40%': 11
+                }
+            }
+        };
+
+        function createFoodItem(name, gramPerUnit, group, category) {
+            const cleanId = `${group}-${category}-${name.replace(/\s+/g, '-').replace(/[()%,.]/g, '')}`;
+            return `
+                <div class="food-item" data-name="${name.toLowerCase()}" data-group="${group}" data-category="${category}">
+                    <div class="food-name">${name}</div>
+                    <div class="food-controls">
+                        <div class="input-container">
+                            <input type="number" 
+                                   class="calc-input" 
+                                   id="gram-${cleanId}" 
+                                   placeholder="0"
+                                   step="0.1"
+                                   onInput="calculateUnits('${cleanId}', ${gramPerUnit})">
+                            <span class="unit-label">g</span>
+                        </div>
+                        <span class="equals">=</span>
+                        <div class="input-container">
+                            <input type="number" 
+                                   class="calc-input" 
+                                   id="unit-${cleanId}" 
+                                   placeholder="0"
+                                   step="0.1"
+                                   onInput="calculateGrams('${cleanId}', ${gramPerUnit})">
+                            <span class="unit-label">E</span>
+                        </div>
+                        <span class="base-info">${gramPerUnit}g</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function calculateUnits(cleanId, gramPerUnit) {
+            const gramInput = document.getElementById(`gram-${cleanId}`);
+            const unitInput = document.getElementById(`unit-${cleanId}`);
+            
+            const grams = parseFloat(gramInput.value) || 0;
+            const units = grams / gramPerUnit;
+            
+            unitInput.value = units > 0 ? parseFloat(units.toFixed(2)) : '';
+        }
+
+        function calculateGrams(cleanId, gramPerUnit) {
+            const gramInput = document.getElementById(`gram-${cleanId}`);
+            const unitInput = document.getElementById(`unit-${cleanId}`);
+            
+            const units = parseFloat(unitInput.value) || 0;
+            const grams = units * gramPerUnit;
+            
+            gramInput.value = grams > 0 ? parseFloat(grams.toFixed(1)) : '';
+        }
+
+        function showTab(groupId) {
+            // Tab-Buttons aktualisieren
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Tab-Content anzeigen
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(groupId).classList.add('active');
+        }
+
+        function renderFoodItems() {
+            Object.keys(foodData).forEach(group => {
+                Object.keys(foodData[group]).forEach(category => {
+                    const container = document.getElementById(`${category}-${group}`);
+                    if (container) {
+                        const items = Object.entries(foodData[group][category])
+                            .sort(([a], [b]) => a.localeCompare(b))
+                            .map(([name, gramPerUnit]) => createFoodItem(name, gramPerUnit, group, category))
+                            .join('');
+                        container.innerHTML = items;
+                    }
+                });
+            });
+        }
+
+        function setupSearch() {
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                const foodItems = document.querySelectorAll('.food-item');
+                
+                foodItems.forEach(item => {
+                    const name = item.dataset.name;
+                    if (name.includes(searchTerm)) {
+                        item.classList.remove('hidden');
+                    } else {
+                        item.classList.add('hidden');
+                    }
+                });
+            });
+        }
+
+        // Initialisierung
+        document.addEventListener('DOMContentLoaded', () => {
+            renderFoodItems();
+            setupSearch();
+        });
+    </script>
+</body>
+</html>
