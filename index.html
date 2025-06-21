@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>Lebensmittel Einheiten-Rechner</title>
     <style>
         * {
@@ -83,6 +83,8 @@
             font-weight: 600;
             color: #6c757d;
             transition: all 0.3s ease;
+            min-height: 44px; /* Enhanced touch target for mobile */
+            touch-action: manipulation; /* Prevent browser default gestures */
         }
 
         .tab.active {
@@ -178,6 +180,9 @@
             text-align: center;
             font-size: 12px;
             background: white;
+            min-height: 44px; /* Enhanced touch target for mobile */
+            touch-action: manipulation; /* Prevent browser default gestures */
+            inputmode: decimal; /* Show numeric keypad on mobile */
         }
 
         .calc-input:focus {
@@ -276,10 +281,24 @@
             .calc-input {
                 width: 40px;
                 height: 24px;
+                min-height: 44px; /* Maintain touch target size */
             }
 
             .food-name {
-                font-size: 11px;
+                font-size: 12px; /* Slightly larger for better readability */
+            }
+
+            .tabs {
+                display: block; /* Stack tabs vertically on very small screens */
+            }
+
+            .tab {
+                width: 100%; /* Full width for stacked tabs */
+                padding: 12px 10px;
+            }
+
+            .category-header {
+                padding: 8px 12px; /* Reduce height for mobile */
             }
         }
 
