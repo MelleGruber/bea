@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no, user-scalable=yes">
+    <title>BeaBalance - Tabellen</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+            transition: box-shadow 0.3s ease;
+        }
+        .container:hover {
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .header {
+            background: #4a4a4a;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .header h1 {
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+
+        .search-container {
+            position: relative;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 35px 10px 15px;
+            border: none;
+            border-radius: 25px;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .search-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(137, 37, 62, 0.3);
+        }
+
+        .search-input::placeholder {
+            color: #666;
+        }
+        
+        .navigation-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            min-height: 44px;
+            touch-action: manipulation;
+        }
+        
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .nav-btn:focus {
+            outline: 2px solid white;
+            outline-offset: 2px;
+        }
+        
+        .nav-btn span {
+            font-size: 16px;
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px 15px;
+            text-align: center;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            color: #6c757d;
+            transition: all 0.3s ease;
+            min-height: 44px;
+            touch-action: manipulation;
+            border-radius: 8px 8px 0 0;
+            position: relative;
+        }
+        
+        .tab:focus {
+            outline: 2px solid #89253e;
+            outline-offset: -2px;
+            z-index: 1;
+        }
+        
+        .tab:hover {
+            background: rgba(137, 37, 62, 0.1);
+            color: #89253e;
+        }
+
+        .tab.active {
+            background: white;
+            color: #89253e;
+            border-bottom: 3px solid #89253e;
+            box-shadow: inset 0 3px 0 #89253e;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 15px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .categories {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            gap: 15px;
+        }
+
+        .category {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            width: calc(33.33% - 20px);
+            min-width: 300px;
+            margin-bottom: 15px;
+        }
+        .category:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .category-header {
+            padding: 14px 16px;
+            font-weight: 700;
+            font-size: 14px;
+            text-align: center;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+        }
+        .category-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .kohlenhydrate-header { background: #6b8e23; color: white; }
+        .fett-header { background: #d2691e; color: white; }
+        .eiweiss-header { background: #4682b4; color: white; }
+
+        .food-list {
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 5px;
+        }
+
+        .food-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            border-bottom: 1px solid #e9ecef;
+            transition: background-color 0.2s ease;
+        }
+
+        .food-item:hover {
+            background-color: rgba(137, 37, 62, 0.1);
+        }
+
+        .food-item:last-child {
+            border-bottom: none;
+        }
+
+        .food-name {
+            flex: 1;
+            font-size: 13px;
+            font-weight: 500;
+            color: #333;
+            min-width: 0;
+            margin-right: 8px;
+        }
+
+        .food-controls {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .input-container {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .calc-input {
+            width: 50px;
+            height: 28px;
+            padding: 0 4px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 12px;
+            background: white;
+            min-height: 44px;
+            touch-action: manipulation;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .calc-input[inputmode="decimal"] {
+            -webkit-appearance: none;
+            -moz-appearance: textfield;
+        }
+        
+        .calc-input::-webkit-outer-spin-button,
+        .calc-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .calc-input:focus {
+            outline: 2px solid #89253e;
+            outline-offset: 2px;
+            border-color: #89253e;
+            box-shadow: 0 0 0 2px rgba(137, 37, 62, 0.3);
+        }
+        
+        .calc-input:focus-visible {
+            outline: 2px solid #89253e;
+            outline-offset: 2px;
+        }
+
+        .unit-label {
+            font-size: 10px;
+            color: #666;
+            font-weight: 500;
+            min-width: 20px;
+        }
+
+        .equals {
+            font-size: 12px;
+            color: #999;
+            margin: 0 2px;
+        }
+
+        .base-info {
+            font-size: 9px;
+            color: #999;
+            margin-left: 4px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Mobile Optimierung */
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+
+            .container {
+                border-radius: 12px;
+            }
+
+            .header {
+                padding: 15px;
+            }
+
+            .header h1 {
+                font-size: 1.5em;
+            }
+
+            .search-container {
+                max-width: 250px;
+            }
+
+            .tab {
+                padding: 10px 12px;
+                font-size: 13px;
+            }
+
+            .tab-content {
+                padding: 10px;
+            }
+
+            .categories {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .category {
+                width: 100%;
+                min-width: auto;
+            }
+
+            .food-item {
+                padding: 6px 10px;
+            }
+
+            .food-name {
+                font-size: 12px;
+            }
+
+            .calc-input {
+                width: 50px;
+                height: 32px;
+                font-size: 12px;
+                min-height: 44px;
+            }
+
+            .unit-label {
+                font-size: 9px;
+            }
+
+            .base-info {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 25px 12px;
+            }
+            
+            .header h1 {
+                font-size: 1.4em;
+            }
+            
+            .navigation-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .nav-btn {
+                padding: 18px 15px;
+                font-size: 16px;
+                min-height: 56px;
+            }
+
+            .search-input {
+                padding: 18px 25px;
+                font-size: 17px;
+                min-height: 56px;
+            }
+
+            .tabs {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .tab {
+                width: 100%;
+                padding: 18px 15px;
+                min-height: 60px;
+                font-size: 17px;
+                border-radius: 0;
+            }
+            
+            .tab:first-child {
+                border-radius: 8px 8px 0 0;
+            }
+
+            .category-header {
+                padding: 20px 15px;
+                font-size: 17px;
+            }
+            
+            .food-item {
+                padding: 18px 15px;
+                min-height: 70px;
+            }
+            
+            .food-name {
+                font-size: 17px;
+            }
+            
+            .calc-input {
+                width: 75px;
+                height: 48px;
+                font-size: 16px;
+                min-height: 52px;
+            }
+            
+            .food-controls {
+                gap: 6px;
+            }
+            
+            .equals {
+                margin: 0 4px;
+                font-size: 15px;
+            }
+            
+            .unit-label {
+                font-size: 13px;
+            }
+            
+            .reset-button {
+                padding: 18px 35px;
+                font-size: 17px;
+                min-height: 60px;
+            }
+        }
+
+        /* Summary Container Styling */
+        .summary-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+        
+        .lock-controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px auto;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+            max-width: 600px;
+        }
+        .lock-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .lock-label {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .lock-value {
+            font-size: 14px;
+            font-weight: 700;
+            background: rgba(0, 0, 0, 0.1);
+            padding: 3px 8px;
+            border-radius: 15px;
+            min-width: 60px;
+            text-align: center;
+        }
+        .lock-button {
+            padding: 5px 15px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.3s ease;
+        }
+        .lock-button.locked {
+            background: #dc3545;
+        }
+        .lock-button:hover {
+            background: #5a6268;
+        }
+        .lock-button.locked:hover {
+            background: #c82333;
+        }
+        .selection-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            border-bottom: 1px solid #e9ecef;
+            transition: background-color 0.2s ease;
+        }
+        .selection-item:hover {
+            background-color: rgba(137, 37, 62, 0.1);
+        }
+        .selection-item:last-child {
+            border-bottom: none;
+        }
+        .selection-checkbox {
+            margin-right: 10px;
+        }
+        .selection-name {
+            flex: 1;
+            font-size: 13px;
+            font-weight: 500;
+            color: #333;
+            min-width: 0;
+            margin-right: 8px;
+        }
+        .slider-container {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            width: 150px;
+        }
+        .slider-container.active {
+            display: flex;
+        }
+        .slider-row {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .slider-input {
+            flex: 1;
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #ddd;
+            outline: none;
+        }
+        .slider-input::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #89253e;
+            cursor: pointer;
+        }
+        .slider-input::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #89253e;
+            cursor: pointer;
+            border: none;
+        }
+        .slider-value {
+            width: 40px;
+            text-align: center;
+            font-size: 12px;
+        }
+        .lock-icon {
+            margin-left: 5px;
+            cursor: pointer;
+            color: #6c757d;
+            transition: color 0.3s ease;
+        }
+        .lock-icon.locked {
+            color: #dc3545;
+        }
+        .lock-icon:hover {
+            color: #343a40;
+        }
+        .lock-icon.locked:hover {
+            color: #c82333;
+        }
+        .summary-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .summary-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+        }
+        .summary-value {
+            font-size: 14px;
+            font-weight: 700;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 3px 8px;
+            border-radius: 15px;
+            min-width: 60px;
+            text-align: center;
+        }
+        
+        .reset-button {
+            margin-top: 15px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            min-height: 44px;
+            touch-action: manipulation;
+        }
+        
+        .reset-button:focus {
+            outline: 2px solid white;
+            outline-offset: 2px;
+        }
+        
+        .reset-button:active {
+            transform: scale(0.95);
+        }
+        .reset-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+        
+        /* Scrollbar Styling */
+        .food-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .food-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .food-list::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 4px;
+            transition: background 0.3s ease;
+        }
+
+        .food-list::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        
+        /* Reduced Motion Support */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+        
+        /* High Contrast Mode Support */
+        @media (prefers-contrast: high) {
+            .calc-input:focus,
+            .tab:focus,
+            .reset-button:focus {
+                outline: 3px solid;
+                outline-offset: 3px;
+            }
+        }
+        
+        /* Error States */
+        .calc-input.error {
+            border-color: #dc3545;
+            background-color: #fff5f5;
+        }
+        
+        .calc-input.error:focus {
+            outline-color: #dc3545;
+            box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.3);
+        }
+        
+        /* Loading State */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        
+        /* Screen Reader Only */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>BeaBalance - Tabellen</h1>
+            <div class="search-container">
+                <label for="searchInput" class="sr-only">Lebensmittel suchen</label>
+                <input type="text" 
+                       class="search-input" 
+                       id="searchInput" 
+                       placeholder="Suche..." 
+                       aria-label="Lebensmittel suchen"
+                       inputmode="text">
+            </div>
+            <div class="navigation-container">
+                <a href="index.html" class="nav-btn home-btn" aria-label="Zur Startseite">
+                    <span>🏠</span> Start
+                </a>
+                <a href="selection.html" class="nav-btn selection-btn" aria-label="Zum Auswahl-Modus">
+                    <span>🎯</span> Auswahl
+                </a>
+            </div>
+            <div class="summary-container" id="totalSummary">
+                <div class="summary-item">
+                    <span class="summary-label">Kohlenhydrate:</span>
+                    <span class="summary-value" id="totalKohlenhydrate">0.00 E</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Fette:</span>
+                    <span class="summary-value" id="totalFett">0.00 E</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Eiweiße:</span>
+                    <span class="summary-value" id="totalEiweiss">0.00 E</span>
+                </div>
+            </div>
+            <button class="reset-button" 
+                    onclick="resetAllInputs()" 
+                    aria-label="Alle Eingaben zurücksetzen"
+                    type="button">Zurücksetzen</button>
+        </div>
+
+        <div class="tabs" role="tablist">
+            <button class="tab active" 
+                    onclick="showTab('group1')" 
+                    role="tab"
+                    aria-selected="true"
+                    aria-controls="group1"
+                    id="tab-group1"
+                    type="button">Ernährungsgruppe 1</button>
+            <button class="tab" 
+                    onclick="showTab('group2')" 
+                    role="tab"
+                    aria-selected="false"
+                    aria-controls="group2"
+                    id="tab-group2"
+                    type="button">Ernährungsgruppe 2</button>
+        </div>
+
+        <div id="group1" 
+             class="tab-content active" 
+             role="tabpanel" 
+             aria-labelledby="tab-group1" 
+             aria-hidden="false">
+            <div class="categories">
+                <div class="category">
+                    <div class="category-header kohlenhydrate-header">Kohlenhydrate</div>
+                    <div class="food-list" id="kohlenhydrate-group1"></div>
+                </div>
+                <div class="category">
+                    <div class="category-header fett-header">Fette</div>
+                    <div class="food-list" id="fett-group1"></div>
+                </div>
+                <div class="category">
+                    <div class="category-header eiweiss-header">Eiweiße</div>
+                    <div class="food-list" id="eiweiss-group1"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="group2" 
+             class="tab-content" 
+             role="tabpanel" 
+             aria-labelledby="tab-group2" 
+             aria-hidden="true">
+            <div class="categories">
+                <div class="category">
+                    <div class="category-header kohlenhydrate-header">Kohlenhydrate</div>
+                    <div class="food-list" id="kohlenhydrate-group2"></div>
+                </div>
+                <div class="category">
+                    <div class="category-header fett-header">Fette</div>
+                    <div class="food-list" id="fett-group2"></div>
+                </div>
+                <div class="category">
+                    <div class="category-header eiweiss-header">Eiweiße</div>
+                    <div class="food-list" id="eiweiss-group2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const foodData = {
+            group1: {
+                kohlenhydrate: {
+                    'Basmatireis': 13,
+                    'Hirse': 13,
+                    'Mischbrot': 19,
+                    'Vollkornnudeln': 12,
+                    'Vollkornbrot': 22,
+                    'Vollkornreis': 13,
+                    'Vollkorntoast': 17,
+                    'Weizenkleie': 24,
+                    'Wildreis': 14,
+                    'Bambussprossen': 265,
+                    'Brokkoli': 175,
+                    'Chicorée': 264,
+                    'Chinakohl': 370,
+                    'Feldsalat': 325,
+                    'Kartoffeln': 65,
+                    'Mangold': 315,
+                    'Peperoni': 195,
+                    'Radieschen': 320,
+                    'Rettich': 320,
+                    'Rosenkohl': 130,
+                    'Rotkohl': 200,
+                    'Rucola': 180,
+                    'Tomate': 250,
+                    'Weißkohl': 185,
+                    'Zucchini': 240,
+                    'Kichererbsen (getr.)': 14,
+                    'Weiße Bohnen (getr.)': 15,
+                    'Apfel': 85,
+                    'Aprikose': 115,
+                    'Banane': 50,
+                    'Birne': 80,
+                    'Bitterschokolade': 5,
+                    'Brombeeren': 114,
+                    'Erdbeeren': 155,
+                    'Granatapfel': 60,
+                    'Heidelbeeren': 140,
+                    'Himbeeren': 160,
+                    'Holunderbeeren': 85,
+                    'Khakifrucht': 65,
+                    'Kirschen': 75,
+                    'Kiwi': 95,
+                    'Mango': 77,
+                    'Milchschokolade': 4.5,
+                    'Mirabelle': 72,
+                    'Nektarine': 95,
+                    'Papaya': 360,
+                    'Pfirsich': 110,
+                    'Pflaume': 100,
+                    'Preiselbeeren': 145,
+                    'Stachelbeeren': 130,
+                    'Trauben': 65
+                },
+                fett: {
+                    'Kürbiskerne': 4.5,
+                    'Leinsamen': 6.5,
+                    'Macadamia': 3.5,
+                    'Walnüsse': 3.5,
+                    'Butter': 3,
+                    'Kokosfett': 3,
+                    'Kokosmilch': 12,
+                    'Mayonnaise': 5,
+                    'Olivenöl': 3,
+                    'Leinsamenöl': 3
+                },
+                eiweiss: {
+                    'Brathuhn': 22,
+                    'Rinderhack': 14,
+                    'Rindfilet': 25,
+                    'Schweinefilet': 18,
+                    'Appenzeller': 8,
+                    'Brie': 9,
+                    'Buttermilch': 85,
+                    'Camembert': 11,
+                    'Cheddar': 7,
+                    'Edamer': 10,
+                    'Eier': 19,
+                    'Gouda': 8,
+                    'Parmesan': 8,
+                    'Quark': 28,
+                    'Romadur': 11,
+                    'Saure Sahne': 16,
+                    'Schlagsahne': 10,
+                    'Kochkäse 20%': 27
+                }
+            },
+            group2: {
+                kohlenhydrate: {
+                    'Amaranth': 12,
+                    'Buchweizen': 13,
+                    'Dinkel': 14,
+                    'Gerste': 14,
+                    'Hafer': 13,
+                    'Quinoa': 13,
+                    'Roggen': 15,
+                    'Roggenmischbrot': 21,
+                    'Roggenvollkornbrot': 23,
+                    'Erbsen': 55,
+                    'Kidneybohnen (getr.)': 10,
+                    'Linsen (getr.)': 15,
+                    'Tempeh': 23,
+                    'Artischocken': 200,
+                    'Eisbergsalat': 385,
+                    'Frühlingszwiebel': 145,
+                    'Grüne Bohnen': 140,
+                    'Karotte': 180,
+                    'Knoblauch': 33,
+                    'Kopfsalat': 385,
+                    'Lauch': 180,
+                    'Mais': 50,
+                    'Mungobohnensprossen': 80,
+                    'Radicchio': 385,
+                    'Schalotten': 62,
+                    'Spargel': 265,
+                    'Spinat': 300,
+                    'Süßkartoffel': 32,
+                    'Zwiebeln': 145,
+                    'Apfel': 85,
+                    'Aprikose': 115,
+                    'Banane': 50,
+                    'Birne': 80,
+                    'Bitterschokolade': 5,
+                    'Brombeeren': 114,
+                    'Erdbeeren': 155,
+                    'Granatapfel': 60,
+                    'Heidelbeeren': 140,
+                    'Himbeeren': 160,
+                    'Holunderbeeren': 85,
+                    'Khakifrucht': 65,
+                    'Kirschen': 75,
+                    'Kiwi': 95,
+                    'Mango': 77,
+                    'Milchschokolade': 4.5,
+                    'Mirabelle': 72,
+                    'Nektarine': 95,
+                    'Papaya': 360,
+                    'Pfirsich': 110,
+                    'Pflaume': 100,
+                    'Preiselbeeren': 145,
+                    'Stachelbeeren': 130,
+                    'Trauben': 65
+                },
+                fett: {
+                    'Kokosnuss': 7,
+                    'Mandeln': 4,
+                    'Oliven': 18,
+                    'Pistazien': 4,
+                    'Sesamsamen': 4.5,
+                    'Sonnenblumenkerne': 4,
+                    'Butter': 3,
+                    'Mayonnaise': 3.5,
+                    'Olivenöl': 3,
+                    'Leinsamenöl': 3
+                },
+                eiweiss: {
+                    'Hühnerbrust': 30,
+                    'Truthahnbrust': 28,
+                    'Butterkäse': 9,
+                    'Crème fraîche': 10,
+                    'Eier': 19,
+                    'Emmentaler': 8,
+                    'Feta': 13,
+                    'Gorgonzola': 8,
+                    'Hüttenkäse': 29,
+                    'Joghurt 3,5%': 44,
+                    'Mozzarella': 13,
+                    'Ricotta': 17,
+                    'Tilsiter': 8,
+                    'Romadur 40%': 11,
+                    'Kochkäse 20%': 27
+                }
+            }
+        };
+
+        function createFoodItem(name, gramPerUnit, group, category) {
+            const cleanId = `${group}-${category}-${name.replace(/\s+/g, '-').replace(/[()%,.]/g, '')}`;
+            return `
+                <div class="food-item" data-name="${name.toLowerCase()}" data-group="${group}" data-category="${category}">
+                    <div class="food-name">${name}</div>
+                    <div class="food-controls">
+                        <div class="input-container">
+                            <label for="gram-${cleanId}" class="sr-only">Gramm für ${name}</label>
+                            <input type="number" 
+                                   class="calc-input" 
+                                   id="gram-${cleanId}" 
+                                   placeholder="0"
+                                   step="0.1"
+                                   min="0"
+                                   inputmode="decimal"
+                                   aria-label="Gramm für ${name}"
+                                   onInput="calculateUnits('${cleanId}', ${gramPerUnit})">
+                            <span class="unit-label">g</span>
+                        </div>
+                        <span class="equals">=</span>
+                        <div class="input-container">
+                            <label for="unit-${cleanId}" class="sr-only">Einheiten für ${name}</label>
+                            <input type="number" 
+                                   class="calc-input" 
+                                   id="unit-${cleanId}" 
+                                   placeholder="0"
+                                   step="0.1"
+                                   min="0"
+                                   inputmode="decimal"
+                                   aria-label="Einheiten für ${name}"
+                                   onInput="calculateGrams('${cleanId}', ${gramPerUnit})">
+                            <span class="unit-label">E</span>
+                        </div>
+                        <span class="base-info">${gramPerUnit}g</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Debounced update function for better performance
+        const debouncedUpdate = debounce(() => {
+            updateTotals();
+        }, 100);
+        
+        function calculateUnits(cleanId, gramPerUnit) {
+            const gramInput = document.getElementById(`gram-${cleanId}`);
+            const unitInput = document.getElementById(`unit-${cleanId}`);
+            
+            try {
+                const grams = Math.max(0, parseFloat(gramInput.value) || 0);
+                const units = grams / gramPerUnit;
+                
+                unitInput.value = units > 0 ? parseFloat(units.toFixed(2)) : '';
+                gramInput.classList.remove('error');
+                
+                debouncedUpdate();
+            } catch (error) {
+                gramInput.classList.add('error');
+                console.error('Error calculating units:', error);
+            }
+        }
+
+        function calculateGrams(cleanId, gramPerUnit) {
+            const gramInput = document.getElementById(`gram-${cleanId}`);
+            const unitInput = document.getElementById(`unit-${cleanId}`);
+            
+            try {
+                const units = Math.max(0, parseFloat(unitInput.value) || 0);
+                const grams = units * gramPerUnit;
+                
+                gramInput.value = grams > 0 ? parseFloat(grams.toFixed(1)) : '';
+                unitInput.classList.remove('error');
+                
+                debouncedUpdate();
+            } catch (error) {
+                unitInput.classList.add('error');
+                console.error('Error calculating grams:', error);
+            }
+        }
+
+        function showTab(groupId, targetButton = null) {
+            // Tab-Buttons aktualisieren
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+                tab.setAttribute('aria-selected', 'false');
+                tab.setAttribute('tabindex', '-1');
+            });
+            
+            const activeButton = targetButton || event?.target;
+            if (activeButton) {
+                activeButton.classList.add('active');
+                activeButton.setAttribute('aria-selected', 'true');
+                activeButton.setAttribute('tabindex', '0');
+            }
+            
+            // Tab-Content anzeigen
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+                content.setAttribute('aria-hidden', 'true');
+            });
+            
+            const activeContent = document.getElementById(groupId);
+            if (activeContent) {
+                activeContent.classList.add('active');
+                activeContent.setAttribute('aria-hidden', 'false');
+            }
+        }
+
+        function renderFoodItems() {
+            Object.keys(foodData).forEach(group => {
+                Object.keys(foodData[group]).forEach(category => {
+                    const container = document.getElementById(`${category}-${group}`);
+                    if (container) {
+                        const items = Object.entries(foodData[group][category])
+                            .sort(([a], [b]) => a.localeCompare(b))
+                            .map(([name, gramPerUnit]) => createFoodItem(name, gramPerUnit, group, category))
+                            .join('');
+                        container.innerHTML = items;
+                    }
+                });
+            });
+        }
+
+        function setupSearch() {
+            const searchInput = document.getElementById('searchInput');
+            let searchTimeout;
+            
+            searchInput.addEventListener('input', (e) => {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    const searchTerm = e.target.value.toLowerCase().trim();
+                    const foodItems = document.querySelectorAll('.food-item');
+                    let visibleCount = 0;
+                    
+                    foodItems.forEach(item => {
+                        const name = item.dataset.name;
+                        const isVisible = !searchTerm || name.includes(searchTerm);
+                        item.classList.toggle('hidden', !isVisible);
+                        if (isVisible) visibleCount++;
+                    });
+                    
+                    // Announce search results
+                    if (searchTerm) {
+                        announceToScreenReader(`${visibleCount} Ergebnisse für "${searchTerm}"`);
+                    }
+                }, 300);
+            });
+            
+            // Clear search on Escape
+            searchInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    searchInput.value = '';
+                    searchInput.dispatchEvent(new Event('input'));
+                }
+            });
+        }
+
+        function updateTotals() {
+            let totalKohlenhydrate = 0;
+            let totalFett = 0;
+            let totalEiweiss = 0;
+            
+            document.querySelectorAll('.food-item').forEach(item => {
+                const cleanId = item.dataset.group + '-' + item.dataset.category + '-' + item.querySelector('.food-name').textContent.replace(/\s+/g, '-').replace(/[()%,.]/g, '');
+                const unitInput = document.getElementById(`unit-${cleanId}`);
+                if (unitInput && unitInput.value) {
+                    const units = parseFloat(unitInput.value) || 0;
+                    const category = item.dataset.category;
+                    
+                    if (category === 'kohlenhydrate') {
+                        totalKohlenhydrate += units;
+                    } else if (category === 'fett') {
+                        totalFett += units;
+                    } else if (category === 'eiweiss') {
+                        totalEiweiss += units;
+                    }
+                }
+            });
+            
+            document.getElementById('totalKohlenhydrate').textContent = totalKohlenhydrate.toFixed(2) + ' E';
+            document.getElementById('totalFett').textContent = totalFett.toFixed(2) + ' E';
+            document.getElementById('totalEiweiss').textContent = totalEiweiss.toFixed(2) + ' E';
+        }
+
+        function resetAllInputs() {
+            try {
+                document.querySelectorAll('.calc-input').forEach(input => {
+                    input.value = '';
+                    input.classList.remove('error');
+                });
+                updateTotals();
+                announceToScreenReader('Alle Eingaben wurden zurückgesetzt');
+            } catch (error) {
+                console.error('Error resetting inputs:', error);
+            }
+        }
+
+        // Utility functions
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+        
+        function announceToScreenReader(message) {
+            const announcement = document.createElement('div');
+            announcement.setAttribute('aria-live', 'polite');
+            announcement.setAttribute('aria-atomic', 'true');
+            announcement.setAttribute('class', 'sr-only');
+            announcement.textContent = message;
+            document.body.appendChild(announcement);
+            
+            setTimeout(() => {
+                document.body.removeChild(announcement);
+            }, 1000);
+        }
+        
+        function setupKeyboardNavigation() {
+            // Tab navigation for tab buttons
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach((tab, index) => {
+                tab.addEventListener('keydown', (e) => {
+                    let targetIndex;
+                    
+                    switch (e.key) {
+                        case 'ArrowRight':
+                        case 'ArrowDown':
+                            targetIndex = (index + 1) % tabs.length;
+                            break;
+                        case 'ArrowLeft':
+                        case 'ArrowUp':
+                            targetIndex = (index - 1 + tabs.length) % tabs.length;
+                            break;
+                        case 'Home':
+                            targetIndex = 0;
+                            break;
+                        case 'End':
+                            targetIndex = tabs.length - 1;
+                            break;
+                        default:
+                            return;
+                    }
+                    
+                    e.preventDefault();
+                    tabs[targetIndex].focus();
+                    tabs[targetIndex].click();
+                });
+                
+                tab.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        tab.click();
+                    }
+                });
+            });
+        }
+        
+        // Initialisierung
+        document.addEventListener('DOMContentLoaded', () => {
+            renderFoodItems();
+            setupSearch();
+            setupKeyboardNavigation();
+            updateTotals();
+            
+            // Set initial ARIA attributes
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach((tab, index) => {
+                tab.setAttribute('role', 'tab');
+                tab.setAttribute('aria-selected', index === 0 ? 'true' : 'false');
+                tab.setAttribute('tabindex', index === 0 ? '0' : '-1');
+            });
+            
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach((content, index) => {
+                content.setAttribute('role', 'tabpanel');
+                content.setAttribute('aria-hidden', index === 0 ? 'false' : 'true');
+            });
+            
+            // Add role to tabs container
+            const tabsContainer = document.querySelector('.tabs');
+            if (tabsContainer) {
+                tabsContainer.setAttribute('role', 'tablist');
+            }
+            
+            // Add live regions for totals
+            const summaryItems = document.querySelectorAll('.summary-value');
+            summaryItems.forEach(item => {
+                item.setAttribute('aria-live', 'polite');
+            });
+        });
+    </script>
+</body>
+</html>
